@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
+    <title>OptimalWay</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --neon-blue: #0ff0fc;
+            --neon-pink: #ff2a6d;
+            --neon-purple: #d300c5;
+            --neon-green: #39ff14;
+            --dark-bg: #0a0a12;
+            --darker-bg: #050508;
+            --panel-bg: rgba(15, 15, 25, 0.8);
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 42, 109, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(13, 240, 252, 0.1) 0%, transparent 20%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--neon-blue);
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(13, 240, 252, 0.5);
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--neon-pink);
+            margin-bottom: 30px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px rgba(255, 42, 109, 0.3);
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+            background-color: var(--panel-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(13, 240, 252, 0.2);
+            border: 1px solid rgba(13, 240, 252, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-group label {
+            color: var(--neon-blue);
+            font-weight: 600;
+        }
+        
+        .canvas-container {
+            position: relative;
+            background-color: var(--darker-bg);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(13, 240, 252, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(13, 240, 252, 0.2);
+        }
+        
+        #canvas {
+            display: block;
+            background-color: var(--darker-bg);
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background-color: var(--neon-blue);
+            color: var(--darker-bg);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(13, 240, 252, 0.3);
+        }
+        
+        .btn:hover {
+            background-color: var(--neon-pink);
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background-color: var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
+        }
+        
+        .btn-danger:hover {
+            background-color: #ff0a54;
+            box-shadow: 0 0 15px rgba(255, 10, 84, 0.5);
+        }
+        
+        .btn-success {
+            background-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+            color: #000;
+        }
+        
+        .btn-success:hover {
+            background-color: #2de000;
+            box-shadow: 0 0 15px rgba(45, 224, 0, 0.5);
+        }
+        
+        .btn-warning {
+            background-color: var(--neon-purple);
+            box-shadow: 0 0 10px rgba(211, 0, 197, 0.3);
+        }
+        
+        .btn-warning:hover {
+            background-color: #c000b0;
+            box-shadow: 0 0 15px rgba(192, 0, 176, 0.5);
+        }
+        
+        select, input[type="number"] {
+            background-color: rgba(10, 10, 20, 0.8);
+            border: 1px solid var(--neon-blue);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
+        }
+        
+        .toggle-btn {
+            display: inline-block;
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-btn input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #2c3e50;
+            transition: .4s;
+            border-radius: 34px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--neon-blue);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+            background-color: var(--dark-bg);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: var(--panel-bg);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 0 20px rgba(13, 240, 252, 0.5);
+            border: 1px solid var(--neon-blue);
+            color: var(--text-primary);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--neon-blue);
+            padding-bottom: 10px;
+        }
+        
+        .modal-header h3 {
+            color: var(--neon-blue);
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+        }
+        
+        .close {
+            color: var(--neon-pink);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close:hover {
+            color: var(--neon-blue);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            margin-bottom: 15px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px;
+            border: 1px solid var(--neon-blue);
+            border-radius: 4px;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            background-color: var(--panel-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(13, 240, 252, 0.2);
+            border: 1px solid rgba(13, 240, 252, 0.1);
+        }
+        
+        .info-panel h3 {
+            color: var(--neon-blue);
+            margin-top: 0;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            border-bottom: 1px solid var(--neon-blue);
+            padding-bottom: 5px;
+        }
+        
+        #stats {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            color: var(--text-primary);
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 3px solid var(--neon-pink);
+            line-height: 1.5;
+        }
+        
+        .algorithm-settings {
+            margin-top: 15px;
+            background-color: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(13, 240, 252, 0.1);
+            border: 1px solid rgba(13, 240, 252, 0.05);
+        }
+
+        .city-label {
+            position: absolute;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: rgba(10, 10, 20, 0.9);
+            color: var(--neon-blue);
+            padding: 2px 8px;
+            border-radius: 10px;
+            pointer-events: none;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 5px rgba(13, 240, 252, 0.5);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .edge-weight {
+            position: absolute;
+            font-size: 12px;
+            background-color: rgba(10, 10, 20, 0.9);
+            color: var(--neon-green);
+            padding: 2px 8px;
+            border-radius: 10px;
+            pointer-events: none;
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 20px;
+            background-color: var(--panel-bg);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(13, 240, 252, 0.1);
+            border: 1px solid rgba(13, 240, 252, 0.05);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 10px;
+            border-radius: 3px;
+            box-shadow: 0 0 5px currentColor;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background-color: var(--panel-bg);
+            color: var(--neon-blue);
+            border-radius: 4px;
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.3s ease-out;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(13, 240, 252, 0.3);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        
+        .loading-spinner {
+            border: 5px solid rgba(15, 15, 25, 0.3);
+            border-top: 5px solid var(--neon-blue);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 10px rgba(13, 240, 252, 0.5);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Grid lines */
+        .grid-line {
+            position: absolute;
+            background-color: rgba(13, 240, 252, 0.05);
+        }
+
+        /* Cyberpunk scanline effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(13, 240, 252, 0.05) 50%,
+                transparent 100%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Glowing effect for important elements */
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(13, 240, 252, 0.5),
+                            0 0 10px rgba(13, 240, 252, 0.3);
+            }
+            to {
+                box-shadow: 0 0 10px rgba(13, 240, 252, 0.8),
+                            0 0 20px rgba(13, 240, 252, 0.6),
+                            0 0 30px rgba(13, 240, 252, 0.4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="container">
+        <h1>OPTIMIZED ROUTE X</h1>
+        <p class="subtitle">CYBERNETIC TRAVEL PATH OPTIMIZER</p>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="mode">MODE:</label>
+                <select id="mode">
+                    <option value="add">ADD NODES</option>
+                    <option value="connect">CONNECT NODES</option>
+                    <option value="select">SELECT START/END</option>
+                    <option value="delete">DELETE</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="algorithm">ALGORITHM:</label>
+                <select id="algorithm">
+                    <option value="brute">BRUTE FORCE</option>
+                    <option value="branch">BRANCH & BOUND</option>
+                    <option value="nearest">NEAREST NEIGHBOR</option>
+                    <option value="greedy">GREEDY APPROACH</option>
+                    <option value="genetic">GENETIC ALGORITHM</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <span>WEIGHTED EDGES:</span>
+                <label class="toggle-btn">
+                    <input type="checkbox" id="weighted" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <div class="control-group">
+                <span>DIRECTED GRAPH:</span>
+                <label class="toggle-btn">
+                    <input type="checkbox" id="directed">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <button id="solve" class="btn btn-success glow">SOLVE TSP</button>
+            <button id="reset" class="btn btn-danger">RESET</button>
+        </div>
+        
+        <div class="algorithm-settings">
+            <div id="geneticSettings" style="display: none;">
+                <label for="populationSize">POPULATION SIZE:</label>
+                <input type="number" id="populationSize" value="50" min="10" max="200">
+                
+                <label for="generations">MAX GENERATIONS:</label>
+                <input type="number" id="generations" value="100" min="10" max="1000">
+                
+                <label for="mutationRate">MUTATION RATE (%):</label>
+                <input type="number" id="mutationRate" value="10" min="1" max="50">
+            </div>
+            
+            <div id="branchSettings" style="display: none;">
+                <label for="timeLimit">TIME LIMIT (MS):</label>
+                <input type="number" id="timeLimit" value="5000" min="1000" max="30000">
+                
+                <label for="branchingFactor">BRANCHING FACTOR:</label>
+                <input type="number" id="branchingFactor" value="2" min="1" max="5">
+            </div>
+            
+            <div id="greedySettings" style="display: none;">
+                <label for="greedyIterations">ITERATIONS:</label>
+                <input type="number" id="greedyIterations" value="100" min="10" max="1000">
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="canvas" width="1100" height="600"></canvas>
+            <div class="loading">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--neon-blue);"></div>
+                <span>NORMAL EDGE</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--neon-green);"></div>
+                <span>OPTIMAL PATH</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--neon-pink);"></div>
+                <span>START NODE</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--neon-purple);"></div>
+                <span>END NODE</span>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>SOLUTION DATA</h3>
+            <pre id="stats">NO SOLUTION DATA AVAILABLE. ADD NODES AND CONNECTIONS, THEN CLICK "SOLVE TSP".</pre>
+        </div>
+    </div>
+    
+    <!-- Weight Modal -->
+    <div id="weightModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>SET EDGE WEIGHT</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label for="edgeWeight">WEIGHT:</label>
+                <input type="number" id="edgeWeight" value="1" min="1" max="100">
+            </div>
+            <div class="modal-footer">
+                <button id="cancelWeight" class="btn">CANCEL</button>
+                <button id="saveWeight" class="btn btn-success">SAVE</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        // Global variables
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const cities = [];
+        const edges = [];
+        let selectedCity = null;
+        let connectingFrom = null;
+        let startCity = null;
+        let endCity = null;
+        let solution = null;
+        let tempEdge = null;
+        let animationInProgress = false;
+        let cityLabels = [];
+        let edgeWeights = [];
+        
+        // Edge connection modal
+        const weightModal = document.getElementById('weightModal');
+        const edgeWeightInput = document.getElementById('edgeWeight');
+        const saveWeightBtn = document.getElementById('saveWeight');
+        const cancelWeightBtn = document.getElementById('cancelWeight');
+        const closeBtn = document.querySelector('.close');
+        
+        // UI controls
+        const modeSelect = document.getElementById('mode');
+        const algorithmSelect = document.getElementById('algorithm');
+        const weightedToggle = document.getElementById('weighted');
+        const directedToggle = document.getElementById('directed');
+        const solveBtn = document.getElementById('solve');
+        const resetBtn = document.getElementById('reset');
+        const statsDisplay = document.getElementById('stats');
+        const toast = document.getElementById('toast');
+        const loading = document.querySelector('.loading');
+        
+        // Algorithm settings
+        const geneticSettings = document.getElementById('geneticSettings');
+        const branchSettings = document.getElementById('branchSettings');
+        const greedySettings = document.getElementById('greedySettings');
+        
+        // City class
+        class City {
+            constructor(id, x, y) {
+                this.id = id;
+                this.x = x;
+                this.y = y;
+                this.radius = 15;
+                this.color = '#0ff0fc';
+                this.highlighted = false;
+                this.glow = false;
+            }
+            
+            draw() {
+                // Draw glow if highlighted
+                if (this.highlighted || this.glow) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + 10, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(13, 240, 252, 0.2)';
+                    ctx.fill();
+                }
+                
+                // Draw main circle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                if (this === startCity) {
+                    ctx.fillStyle = '#ff2a6d'; // Neon Pink for start
+                } else if (this === endCity) {
+                    ctx.fillStyle = '#d300c5'; // Neon Purple for end
+                } else if (this.highlighted) {
+                    ctx.fillStyle = '#39ff14'; // Neon Green for highlighted
+                } else {
+                    ctx.fillStyle = this.color;
+                }
+                
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // City ID in the center
+                ctx.fillStyle = '#050508';
+                ctx.font = 'bold 14px Rajdhani';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.id, this.x, this.y);
+                
+                // Draw outer ring for glow effect
+                if (this.highlighted || this.glow) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius + 5, 0, Math.PI * 2);
+                    ctx.strokeStyle = this === startCity ? '#ff2a6d' : 
+                                      this === endCity ? '#d300c5' : 
+                                      this.highlighted ? '#39ff14' : '#0ff0fc';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+            
+            contains(x, y) {
+                const distance = Math.sqrt((this.x - x) ** 2 + (this.y - y) ** 2);
+                return distance <= this.radius;
+            }
+        }
+        
+        // Edge class
+        class Edge {
+            constructor(from, to, weight = 1, directed = false) {
+                this.from = from;
+                this.to = to;
+                this.weight = weight;
+                this.directed = directed;
+                this.highlighted = false;
+            }
+            
+            draw() {
+                const fromX = this.from.x;
+                const fromY = this.from.y;
+                const toX = this.to.x;
+                const toY = this.to.y;
+                
+                // Calculate direction vector
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                
+                // Normalize direction vector
+                const normalizedDx = dx / length;
+                const normalizedDy = dy / length;
+                
+                // Calculate start and end points adjusted for city radius
+                const startX = fromX + normalizedDx * this.from.radius;
+                const startY = fromY + normalizedDy * this.from.radius;
+                const endX = toX - normalizedDx * this.to.radius;
+                const endY = toY - normalizedDy * this.to.radius;
+                
+                // Draw the line
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                
+                if (this.highlighted) {
+                    ctx.strokeStyle = '#39ff14'; // Neon Green for highlighted path
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#39ff14';
+                } else {
+                    ctx.strokeStyle = '#0ff0fc';
+                    ctx.lineWidth = 2;
+                    ctx.shadowBlur = 0;
+                }
+                
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                
+                // Draw arrow if directed
+                if (this.directed) {
+                    const arrowSize = 10;
+                    const arrowAngle = Math.atan2(dy, dx);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(
+                        endX - arrowSize * Math.cos(arrowAngle - Math.PI / 6),
+                        endY - arrowSize * Math.sin(arrowAngle - Math.PI / 6)
+                    );
+                    ctx.lineTo(
+                        endX - arrowSize * Math.cos(arrowAngle + Math.PI / 6),
+                        endY - arrowSize * Math.sin(arrowAngle + Math.PI / 6)
+                    );
+                    ctx.closePath();
+                    
+                    if (this.highlighted) {
+                        ctx.fillStyle = '#39ff14';
+                    } else {
+                        ctx.fillStyle = '#0ff0fc';
+                    }
+                    
+                    ctx.fill();
+                }
+                
+                // Draw weight if weighted
+                if (weightedToggle.checked) {
+                    const midX = (startX + endX) / 2;
+                    const midY = (startY + endY) / 2;
+                    
+                    // Add slight offset perpendicular to the edge
+                    const perpX = -normalizedDy * 15;
+                    const perpY = normalizedDx * 15;
+                    
+                    updateEdgeWeightLabel(this, midX + perpX, midY + perpY);
+                }
+            }
+        }
+        
+        // Event listeners
+        canvas.addEventListener('click', handleCanvasClick);
+        canvas.addEventListener('mousemove', handleCanvasMouseMove);
+        
+        modeSelect.addEventListener('change', handleModeChange);
+        algorithmSelect.addEventListener('change', handleAlgorithmChange);
+        weightedToggle.addEventListener('change', updateCanvas);
+        directedToggle.addEventListener('change', updateCanvas);
+        
+        solveBtn.addEventListener('click', solveTSP);
+        resetBtn.addEventListener('click', resetGraph);
+        
+        saveWeightBtn.addEventListener('click', saveEdgeWeight);
+        cancelWeightBtn.addEventListener('click', closeWeightModal);
+        closeBtn.addEventListener('click', closeWeightModal);
+        
+        // Initialize
+        function init() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            updateCanvas();
+        }
+        
+        // Canvas event handlers
+        function handleCanvasClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const mode = modeSelect.value;
+            
+            if (mode === 'add') {
+                addCity(x, y);
+            } else if (mode === 'connect') {
+                connectCities(x, y);
+            } else if (mode === 'select') {
+                selectStartEndCity(x, y);
+            } else if (mode === 'delete') {
+                deleteItem(x, y);
+            }
+        }
+        
+        function handleCanvasMouseMove(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const mode = modeSelect.value;
+            
+            if (mode === 'connect' && connectingFrom) {
+                tempEdge = {
+                    from: connectingFrom,
+                    to: { x, y }
+                };
+                updateCanvas();
+            }
+        }
+        
+        // Mode handling
+        function handleModeChange() {
+            connectingFrom = null;
+            selectedCity = null;
+            tempEdge = null;
+            updateCanvas();
+            
+            const mode = modeSelect.value;
+            if (mode === 'add') {
+                showToast('CLICK ON CANVAS TO ADD NODES');
+            } else if (mode === 'connect') {
+                showToast('SELECT SOURCE NODE THEN DESTINATION NODE TO CREATE EDGE');
+            } else if (mode === 'select') {
+                showToast('SELECT START AND END NODES FOR PATH');
+            } else if (mode === 'delete') {
+                showToast('CLICK ON NODES OR EDGES TO DELETE THEM');
+            }
+        }
+        
+        function handleAlgorithmChange() {
+            const algorithm = algorithmSelect.value;
+            
+            // Hide all settings panels first
+            geneticSettings.style.display = 'none';
+            branchSettings.style.display = 'none';
+            greedySettings.style.display = 'none';
+            
+            // Show the relevant settings panel
+            if (algorithm === 'genetic') {
+                geneticSettings.style.display = 'block';
+            } else if (algorithm === 'branch') {
+                branchSettings.style.display = 'block';
+            } else if (algorithm === 'greedy') {
+                greedySettings.style.display = 'block';
+            }
+        }
+        
+        // Graph manipulation functions
+        function addCity(x, y) {
+            // Check if there's already a city at this location
+            for (const city of cities) {
+                if (city.contains(x, y)) {
+                    showToast('NODES TOO CLOSE TOGETHER');
+                    return;
+                }
+            }
+            
+            const id = cities.length + 1;
+            const city = new City(id, x, y);
+            cities.push(city);
+            
+            // Create city label
+            const label = document.createElement('div');
+            label.className = 'city-label';
+            label.textContent = `NODE ${id}`;
+            label.style.left = `${x + 20}px`;
+            label.style.top = `${y - 10}px`;
+            document.querySelector('.canvas-container').appendChild(label);
+            cityLabels.push(label);
+            
+            // Add temporary glow effect
+            city.glow = true;
+            updateCanvas();
+            setTimeout(() => {
+                city.glow = false;
+                updateCanvas();
+            }, 1000);
+            
+            showToast(`NODE ${id} ADDED`);
+        }
+        
+        function connectCities(x, y) {
+            // Find if user clicked on a city
+            for (const city of cities) {
+                if (city.contains(x, y)) {
+                    if (!connectingFrom) {
+                        // First city selection
+                        connectingFrom = city;
+                        city.highlighted = true;
+                        updateCanvas();
+                        showToast(`SELECTED NODE ${city.id} AS SOURCE`);
+                    } else if (connectingFrom !== city) {
+                        // Second city selection - create edge
+                        if (weightedToggle.checked) {
+                            // Open weight modal
+                            tempEdge = {
+                                from: connectingFrom,
+                                to: city
+                            };
+                            openWeightModal();
+                        } else {
+                            // Create unweighted edge directly
+                            createEdge(connectingFrom, city, 1);
+                            connectingFrom.highlighted = false;
+                            connectingFrom = null;
+                            tempEdge = null;
+                            updateCanvas();
+                        }
+                    } else {
+                        // Clicked on the same city
+                        connectingFrom.highlighted = false;
+                        connectingFrom = null;
+                        tempEdge = null;
+                        updateCanvas();
+                        showToast('CONNECTION CANCELED');
+                    }
+                    return;
+                }
+            }
+            
+            // Clicked on empty space - cancel connection
+            if (connectingFrom) {
+                connectingFrom.highlighted = false;
+                connectingFrom = null;
+                tempEdge = null;
+                updateCanvas();
+                showToast('CONNECTION CANCELED');
+            }
+        }
+        
+        function selectStartEndCity(x, y) {
+            for (const city of cities) {
+                if (city.contains(x, y)) {
+                    if (!startCity) {
+                        startCity = city;
+                        updateCanvas();
+                        showToast(`NODE ${city.id} SET AS START POINT`);
+                    } else if (!endCity && city !== startCity) {
+                        endCity = city;
+                        updateCanvas();
+                        showToast(`NODE ${city.id} SET AS END POINT`);
+                    } else {
+                        // Reset selections if clicking again
+                        startCity = city;
+                        endCity = null;
+                        updateCanvas();
+                        showToast(`RESET SELECTION. NODE ${city.id} IS NOW START POINT`);
+                    }
+                    return;
+                }
+            }
+        }
+        
+        function deleteItem(x, y) {
+            // Check if clicked on a city
+            for (let i = 0; i < cities.length; i++) {
+                if (cities[i].contains(x, y)) {
+                    const deletedCity = cities[i];
+                    
+                    // Remove all edges connected to this city
+                    for (let j = edges.length - 1; j >= 0; j--) {
+                        if (edges[j].from === deletedCity || edges[j].to === deletedCity) {
+                            edges.splice(j, 1);
+                        }
+                    }
+                    
+                    // Remove city label
+                    document.querySelector('.canvas-container').removeChild(cityLabels[i]);
+                    cityLabels.splice(i, 1);
+                    
+                    // Remove the city
+                    cities.splice(i, 1);
+                    
+                    // Reset start/end city if needed
+                    if (startCity === deletedCity) startCity = null;
+                    if (endCity === deletedCity) endCity = null;
+                    
+                    // Renumber remaining cities
+                    cities.forEach((city, index) => {
+                        city.id = index + 1;
+                        cityLabels[index].textContent = `NODE ${city.id}`;
+                    });
+                    
+                    updateCanvas();
+                    showToast('NODE DELETED');
+                    return;
+                }
+            }
+            
+            // Check if clicked on an edge
+            const clickPoint = { x, y };
+            for (let i = 0; i < edges.length; i++) {
+                if (isClickOnEdge(clickPoint, edges[i])) {
+                    edges.splice(i, 1);
+                    updateCanvas();
+                    showToast('EDGE DELETED');
+                    return;
+                }
+            }
+        }
+        
+        function isClickOnEdge(point, edge) {
+            const { x, y } = point;
+            const { from, to } = edge;
+            
+            // Calculate the distance from point to line
+            const A = x - from.x;
+            const B = y - from.y;
+            const C = to.x - from.x;
+            const D = to.y - from.y;
+            
+            const dot = A * C + B * D;
+            const lenSq = C * C + D * D;
+            let param = -1;
+            
+            if (lenSq !== 0) {
+                param = dot / lenSq;
+            }
+            
+            let xx, yy;
+            
+            if (param < 0) {
+                xx = from.x;
+                yy = from.y;
+            } else if (param > 1) {
+                xx = to.x;
+                yy = to.y;
+            } else {
+                xx = from.x + param * C;
+                yy = from.y + param * D;
+            }
+            
+            const dx = x - xx;
+            const dy = y - yy;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            return distance < 10; // Threshold for clicking on an edge
+        }
+        
+        function createEdge(fromCity, toCity, weight) {
+            // Check if edge already exists
+            for (const edge of edges) {
+                if (edge.from === fromCity && edge.to === toCity) {
+                    showToast('EDGE ALREADY EXISTS');
+                    return;
+                }
+                
+                // For undirected graphs, also check the reverse
+                if (!directedToggle.checked && edge.from === toCity && edge.to === fromCity) {
+                    showToast('EDGE ALREADY EXISTS (UNDIRECTED)');
+                    return;
+                }
+            }
+            
+            const directed = directedToggle.checked;
+            const edge = new Edge(fromCity, toCity, weight, directed);
+            edges.push(edge);
+            
+            // Create edge weight label if weighted
+            if (weightedToggle.checked) {
+                const midX = (fromCity.x + toCity.x) / 2;
+                const midY = (fromCity.y + toCity.y) / 2;
+                
+                const weightLabel = document.createElement('div');
+                weightLabel.className = 'edge-weight';
+                weightLabel.textContent = weight;
+                weightLabel.style.left = `${midX}px`;
+                weightLabel.style.top = `${midY}px`;
+                document.querySelector('.canvas-container').appendChild(weightLabel);
+                edgeWeights.push({ label: weightLabel, edge: edge });
+            }
+            
+            showToast(`EDGE CREATED BETWEEN NODE ${fromCity.id} AND NODE ${toCity.id}`);
+        }
+        
+        // Modal functions
+        function openWeightModal() {
+            weightModal.style.display = 'block';
+            edgeWeightInput.focus();
+        }
+        
+        function closeWeightModal() {
+            weightModal.style.display = 'none';
+            if (connectingFrom) {
+                connectingFrom.highlighted = false;
+                connectingFrom = null;
+            }
+            tempEdge = null;
+            updateCanvas();
+        }
+        
+        function saveEdgeWeight() {
+            const weight = parseInt(edgeWeightInput.value) || 1;
+            if (tempEdge && tempEdge.from && tempEdge.to) {
+                createEdge(tempEdge.from, tempEdge.to, weight);
+                tempEdge.from.highlighted = false;
+                connectingFrom = null;
+                tempEdge = null;
+            }
+            weightModal.style.display = 'none';
+            updateCanvas();
+        }
+        
+        // UI functions
+        function updateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(13, 240, 252, 0.1)';
+            ctx.lineWidth = 0.5;
+            
+            for (let i = 0; i < canvas.width; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let j = 0; j < canvas.height; j += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, j);
+                ctx.lineTo(canvas.width, j);
+                ctx.stroke();
+            }
+            
+            // Draw edges
+            for (const edge of edges) {
+                edge.draw();
+            }
+            
+            // Draw temporary edge if connecting
+            if (tempEdge) {
+                ctx.beginPath();
+                ctx.moveTo(tempEdge.from.x, tempEdge.from.y);
+                ctx.lineTo(tempEdge.to.x, tempEdge.to.y);
+                ctx.strokeStyle = '#0ff0fc';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            
+            // Draw cities
+            for (const city of cities) {
+                city.draw();
+            }
+            
+            // Update city labels
+            cityLabels.forEach((label, index) => {
+                const city = cities[index];
+                label.style.left = `${city.x + 20}px`;
+                label.style.top = `${city.y - 10}px`;
+            });
+            
+            // Display edge weight labels if needed
+            updateEdgeWeightLabels();
+        }
+        
+        function updateEdgeWeightLabels() {
+            // Remove existing weight labels
+            edgeWeights.forEach(item => {
+                if (document.body.contains(item.label)) {
+                    document.querySelector('.canvas-container').removeChild(item.label);
+                }
+            });
+            edgeWeights = [];
+            
+            if (!weightedToggle.checked) return;
+            
+            // Create new weight labels
+            edges.forEach(edge => {
+                const fromX = edge.from.x;
+                const fromY = edge.from.y;
+                const toX = edge.to.x;
+                const toY = edge.to.y;
+                
+                // Calculate direction vector
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                
+                // Normalize direction vector
+                const normalizedDx = dx / length;
+                const normalizedDy = dy / length;
+                
+                // Calculate start and end points adjusted for city radius
+                const startX = fromX + normalizedDx * edge.from.radius;
+                const startY = fromY + normalizedDy * edge.from.radius;
+                const endX = toX - normalizedDx * edge.to.radius;
+                const endY = toY - normalizedDy * edge.to.radius;
+                
+                const midX = (startX + endX) / 2;
+                const midY = (startY + endY) / 2;
+                
+                // Add slight offset perpendicular to the edge
+                const perpX = -normalizedDy * 15;
+                const perpY = normalizedDx * 15;
+                
+                updateEdgeWeightLabel(edge, midX + perpX, midY + perpY);
+            });
+        }
+        
+        function updateEdgeWeightLabel(edge, x, y) {
+            // Check if label already exists
+            const existingLabelIndex = edgeWeights.findIndex(item => item.edge === edge);
+            
+            if (existingLabelIndex !== -1) {
+                // Update existing label
+                const label = edgeWeights[existingLabelIndex].label;
+                label.style.left = `${x}px`;
+                label.style.top = `${y}px`;
+                label.textContent = edge.weight;
+            } else {
+                // Create new label
+                const weightLabel = document.createElement('div');
+                weightLabel.className = 'edge-weight';
+                weightLabel.textContent = edge.weight;
+                weightLabel.style.left = `${x}px`;
+                weightLabel.style.top = `${y}px`;
+                document.querySelector('.canvas-container').appendChild(weightLabel);
+                edgeWeights.push({ label: weightLabel, edge: edge });
+            }
+        }
+        
+        function showToast(message, duration = 3000) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        function resetGraph() {
+            if (confirm('ARE YOU SURE YOU WANT TO RESET THE GRAPH? THIS WILL DELETE ALL NODES AND CONNECTIONS.')) {
+                cities.length = 0;
+                edges.length = 0;
+                solution = null;
+                startCity = null;
+                endCity = null;
+                connectingFrom = null;
+                tempEdge = null;
+                
+                // Remove all city labels
+                cityLabels.forEach(label => {
+                    document.querySelector('.canvas-container').removeChild(label);
+                });
+                cityLabels = [];
+                
+                // Remove all edge weight labels
+                edgeWeights.forEach(item => {
+                    document.querySelector('.canvas-container').removeChild(item.label);
+                });
+                edgeWeights = [];
+                
+                statsDisplay.textContent = 'NO SOLUTION DATA AVAILABLE. ADD NODES AND CONNECTIONS, THEN CLICK "SOLVE TSP".';
+                updateCanvas();
+                showToast('GRAPH RESET');
+            }
+        }
+        
+        // TSP Algorithms
+        function solveTSP() {
+            if (cities.length < 3) {
+                showToast('NEED AT LEAST 3 NODES TO SOLVE TSP');
+                return;
+            }
+            
+            const algorithm = algorithmSelect.value;
+            
+            // Reset previous solution
+            solution = null;
+            
+            // Reset highlighting
+            edges.forEach(edge => edge.highlighted = false);
+            
+            // Show loading spinner
+            loading.style.display = 'block';
+            
+            // Use setTimeout to allow the UI to update before running the algorithm
+            setTimeout(() => {
+                try {
+                    let result;
+                    switch (algorithm) {
+                        case 'brute':
+                            result = bruteForceTSP();
+                            break;
+                        case 'branch':
+                            result = branchAndBoundTSP();
+                            break;
+                        case 'nearest':
+                            result = nearestNeighborTSP();
+                            break;
+                        case 'greedy':
+                            result = greedyTSP();
+                            break;
+                        case 'genetic':
+                            result = geneticAlgorithmTSP();
+                            break;
+                    }
+                    
+                    solution = result;
+                    highlightSolution(result);
+                    displayStats(result);
+                } catch (error) {
+                    console.error('Error solving TSP:', error);
+                    showToast('ERROR SOLVING TSP: ' + error.message);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            }, 100);
+        }
+        
+        function bruteForceTSP() {
+            const start = startCity || cities[0];
+            const isCircular = !endCity || endCity === start;
+            const end = endCity || start;
+            
+            // Generate all possible permutations
+            const remainingCities = cities.filter(city => city !== start && (isCircular || city !== end));
+            let permutations = generatePermutations(remainingCities);
+            
+            let minDistance = Infinity;
+            let bestPath = [start];
+            
+            // Evaluate all permutations
+            for (const permutation of permutations) {
+                const path = [start, ...permutation];
+                if (!isCircular) {
+                    path.push(end);
+                } else {
+                    path.push(start);
+                }
+                
+                let distance = 0;
+                for (let i = 0; i < path.length - 1; i++) {
+                    distance += getDistance(path[i], path[i + 1]);
+                }
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    bestPath = path;
+                }
+            }
+            
+            return {
+                path: bestPath,
+                distance: minDistance,
+                algorithm: 'Brute Force',
+                settings: {}
+            };
+            
+            // Helper function to generate all permutations
+            function generatePermutations(cities) {
+                if (cities.length <= 1) return [cities];
+                
+                const result = [];
+                for (let i = 0; i < cities.length; i++) {
+                    const current = cities[i];
+                    const remaining = [...cities.slice(0, i), ...cities.slice(i + 1)];
+                    const remainingPerms = generatePermutations(remaining);
+                    
+                    for (const perm of remainingPerms) {
+                        result.push([current, ...perm]);
+                    }
+                }
+                
+                return result;
+            }
+        }
+        
+        function branchAndBoundTSP() {
+            const timeLimit = parseInt(document.getElementById('timeLimit').value);
+            const branchingFactor = parseInt(document.getElementById('branchingFactor').value);
+            
+            const start = startCity || cities[0];
+            const isCircular = !endCity || endCity === start;
+            const end = endCity || start;
+            
+            const remainingCities = cities.filter(city => city !== start && (isCircular || city !== end));
+            
+            let minDistance = Infinity;
+            let bestPath = [start];
+            const startTime = Date.now();
+            
+            // Priority queue based on lower bound
+            const queue = [];
+            queue.push({
+                path: [],
+                remaining: [...remainingCities],
+                cost: 0,
+                bound: calculateInitialBound()
+            });
+            
+            while (queue.length > 0 && Date.now() - startTime < timeLimit) {
+                // Sort by bound (best first)
+                queue.sort((a, b) => a.bound - b.bound);
+                
+                // Take the best 'branchingFactor' nodes
+                const nodesToExpand = queue.splice(0, Math.min(branchingFactor, queue.length));
+                
+                for (const node of nodesToExpand) {
+                    const { path, remaining, cost } = node;
+                    
+                    if (remaining.length === 0) {
+                        // Complete the path
+                        const fullPath = [start, ...path];
+                        if (!isCircular) {
+                            fullPath.push(end);
+                        } else {
+                            fullPath.push(start);
+                        }
+                        
+                        const finalCost = cost + getDistance(path[path.length - 1] || start, isCircular ? start : end);
+                        
+                        if (finalCost < minDistance) {
+                            minDistance = finalCost;
+                            bestPath = fullPath;
+                        }
+                        continue;
+                    }
+                    
+                    // Expand the node
+                    for (let i = 0; i < remaining.length; i++) {
+                        const nextCity = remaining[i];
+                        const newPath = [...path, nextCity];
+                        const newRemaining = [...remaining.slice(0, i), ...remaining.slice(i + 1)];
+                        
+                        // Calculate new cost
+                        const lastCity = path.length > 0 ? path[path.length - 1] : start;
+                        const newCost = cost + getDistance(lastCity, nextCity);
+                        
+                        // Calculate new bound
+                        const newBound = newCost + calculateBound(newRemaining, nextCity);
+                        
+                        // Only proceed if the bound is better than current best
+                        if (newBound < minDistance) {
+                            queue.push({
+                                path: newPath,
+                                remaining: newRemaining,
+                                cost: newCost,
+                                bound: newBound
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return {
+                path: bestPath,
+                distance: minDistance,
+                algorithm: 'Branch & Bound',
+                settings: {
+                    timeLimit: timeLimit + 'ms',
+                    branchingFactor
+                }
+            };
+            
+            function calculateInitialBound() {
+                // Simple initial bound calculation (MST heuristic)
+                let bound = 0;
+                const citiesToConsider = [...remainingCities];
+                if (!isCircular) citiesToConsider.push(end);
+                
+                // Prim's algorithm for MST
+                const visited = new Set([start]);
+                const unvisited = new Set(citiesToConsider);
+                
+                while (unvisited.size > 0) {
+                    let minEdge = Infinity;
+                    let nextCity = null;
+                    
+                    for (const city1 of visited) {
+                        for (const city2 of unvisited) {
+                            const dist = getDistance(city1, city2);
+                            if (dist < minEdge) {
+                                minEdge = dist;
+                                nextCity = city2;
+                            }
+                        }
+                    }
+                    
+                    if (nextCity) {
+                        bound += minEdge;
+                        visited.add(nextCity);
+                        unvisited.delete(nextCity);
+                    }
+                }
+                
+                return bound;
+            }
+            
+            function calculateBound(remainingCities, lastCity) {
+                // Simple bound calculation (minimum outgoing edges)
+                let bound = 0;
+                
+                // Minimum edge from last city to any remaining city or end
+                if (remainingCities.length > 0 || !isCircular) {
+                    let minOutgoing = Infinity;
+                    
+                    if (remainingCities.length > 0) {
+                        for (const city of remainingCities) {
+                            const dist = getDistance(lastCity, city);
+                            if (dist < minOutgoing) {
+                                minOutgoing = dist;
+                            }
+                        }
+                    } else if (!isCircular) {
+                        minOutgoing = getDistance(lastCity, end);
+                    }
+                    
+                    bound += minOutgoing;
+                }
+                
+                // Minimum edges from remaining cities
+                for (const city of remainingCities) {
+                    let minEdge = Infinity;
+                    
+                    // To other remaining cities
+                    for (const otherCity of remainingCities) {
+                        if (otherCity !== city) {
+                            const dist = getDistance(city, otherCity);
+                            if (dist < minEdge) {
+                                minEdge = dist;
+                            }
+                        }
+                    }
+                    
+                    // Or to the end city if not circular
+                    if (!isCircular) {
+                        const distToEnd = getDistance(city, end);
+                        if (distToEnd < minEdge) {
+                            minEdge = distToEnd;
+                        }
+                    }
+                    
+                    bound += minEdge;
+                }
+                
+                return bound;
+            }
+        }
+        
+        function nearestNeighborTSP() {
+            const start = startCity || cities[0];
+            const isCircular = !endCity || endCity === start;
+            let end = endCity || start;
+            
+            const visited = new Set([start.id]);
+            const path = [start];
+            let currentCity = start;
+            let totalDistance = 0;
+            
+            // Keep finding nearest neighbors until all cities are visited
+            while (visited.size < cities.length) {
+                let nearestCity = null;
+                let minDistance = Infinity;
+                
+                // Find the nearest unvisited city
+                for (const city of cities) {
+                    if (!visited.has(city.id)) {
+                        const distance = getDistance(currentCity, city);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            nearestCity = city;
+                        }
+                    }
+                }
+                
+                if (nearestCity) {
+                    visited.add(nearestCity.id);
+                    path.push(nearestCity);
+                    totalDistance += minDistance;
+                    currentCity = nearestCity;
+                } else {
+                    break; // No more cities to visit
+                }
+            }
+            
+            // Complete the circuit if needed
+            if (isCircular && path.length > 1) {
+                totalDistance += getDistance(path[path.length - 1], start);
+                path.push(start);
+            } else if (!isCircular && path[path.length - 1] !== end) {
+                // Add the specified end city if not already the last city
+                totalDistance += getDistance(path[path.length - 1], end);
+                path.push(end);
+            }
+            
+            return {
+                path: path,
+                distance: totalDistance,
+                algorithm: 'Nearest Neighbor',
+                settings: {}
+            };
+        }
+        
+        function greedyTSP() {
+            const iterations = parseInt(document.getElementById('greedyIterations').value);
+            
+            const start = startCity || cities[0];
+            const isCircular = !endCity || endCity === start;
+            const end = endCity || start;
+            
+            let bestPath = [];
+            let bestDistance = Infinity;
+            
+            for (let iter = 0; iter < iterations; iter++) {
+                // Start with a random city (except when start is specified)
+                let currentCity = start;
+                if (iter > 0 && !startCity) {
+                    currentCity = cities[Math.floor(Math.random() * cities.length)];
+                }
+                
+                const visited = new Set([currentCity.id]);
+                const path = [currentCity];
+                let totalDistance = 0;
+                
+                while (visited.size < cities.length) {
+                    let minEdge = Infinity;
+                    let nextCity = null;
+                    
+                    // Find the shortest edge to an unvisited city
+                    for (const city of cities) {
+                        if (!visited.has(city.id)) {
+                            const distance = getDistance(currentCity, city);
+                            if (distance < minEdge) {
+                                minEdge = distance;
+                                nextCity = city;
+                            }
+                        }
+                    }
+                    
+                    if (nextCity) {
+                        visited.add(nextCity.id);
+                        path.push(nextCity);
+                        totalDistance += minEdge;
+                        currentCity = nextCity;
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Complete the circuit if needed
+                if (isCircular && path.length > 1) {
+                    totalDistance += getDistance(path[path.length - 1], start);
+                    path.push(start);
+                } else if (!isCircular && path[path.length - 1] !== end) {
+                    // Add the specified end city if not already the last city
+                    totalDistance += getDistance(path[path.length - 1], end);
+                    path.push(end);
+                }
+                
+                // Update best solution if this iteration is better
+                if (totalDistance < bestDistance) {
+                    bestDistance = totalDistance;
+                    bestPath = path;
+                }
+            }
+            
+            return {
+                path: bestPath,
+                distance: bestDistance,
+                algorithm: 'Greedy Approach',
+                settings: {
+                    iterations
+                }
+            };
+        }
+        
+        function geneticAlgorithmTSP() {
+            const populationSize = parseInt(document.getElementById('populationSize').value);
+            const generations = parseInt(document.getElementById('generations').value);
+            const mutationRate = parseInt(document.getElementById('mutationRate').value) / 100;
+            
+            const start = startCity || cities[0];
+            const isCircular = !endCity || endCity === start;
+            const end = endCity || start;
+            
+            // Generate initial population
+            let population = [];
+            for (let i = 0; i < populationSize; i++) {
+                const chromosome = getRandomPermutation();
+                population.push(chromosome);
+            }
+            
+            let bestSolution = null;
+            let bestFitness = Infinity;
+            
+            // Evolve over generations
+            for (let generation = 0; generation < generations; generation++) {
+                // Evaluate fitness of each chromosome
+                const fitnessValues = population.map(chromosome => calculateFitness(chromosome, start, end, isCircular));
+                
+                // Find the best solution in this generation
+                const minFitness = Math.min(...fitnessValues);
+                if (minFitness < bestFitness) {
+                    bestFitness = minFitness;
+                    bestSolution = population[fitnessValues.indexOf(minFitness)];
+                }
+                
+                // Create new population
+                const newPopulation = [];
+                
+                // Elitism: keep the best solution
+                newPopulation.push(population[fitnessValues.indexOf(Math.min(...fitnessValues))]);
+                
+                // Create the rest of the population using selection, crossover, and mutation
+                while (newPopulation.length < populationSize) {
+                    // Selection
+                    const parent1 = tournamentSelection(population, fitnessValues);
+                    const parent2 = tournamentSelection(population, fitnessValues);
+                    
+                    // Crossover
+                    let child;
+                    if (Math.random() < 0.8) { // 80% chance of crossover
+                        child = orderCrossover(parent1, parent2);
+                    } else {
+                        child = [...parent1]; // Copy parent1
+                    }
+                    
+                    // Mutation
+                    if (Math.random() < mutationRate) {
+                        mutate(child);
+                    }
+                    
+                    newPopulation.push(child);
+                }
+                
+                population = newPopulation;
+            }
+            
+            // Convert the best solution to a path
+            const pathIndices = bestSolution;
+            const path = [start];
+            
+            // Build the path from the chromosome (excluding start and possibly end)
+            const remainingCities = cities.filter(city => city !== start && (isCircular || city !== end));
+            for (const index of pathIndices) {
+                path.push(remainingCities[index]);
+            }
+            
+            if (!isCircular) {
+                path.push(end);
+            } else {
+                path.push(start); // Complete the circuit
+            }
+            
+            return {
+                path: path,
+                distance: bestFitness,
+                algorithm: 'Genetic Algorithm',
+                settings: {
+                    populationSize,
+                    generations,
+                    mutationRate: mutationRate * 100 + '%'
+                }
+            };
+            
+            // Helper functions for genetic algorithm
+            function getRandomPermutation() {
+                // Create a permutation of indices for cities excluding start and possibly end
+                const n = cities.length - 1 - (isCircular ? 0 : 1);
+                const indices = Array.from({ length: n }, (_, i) => i);
+                
+                // Shuffle the array
+                for (let i = indices.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [indices[i], indices[j]] = [indices[j], indices[i]];
+                }
+                
+                return indices;
+            }
+            
+            function calculateFitness(chromosome, start, end, isCircular) {
+                // Convert chromosome to a path
+                const remainingCities = cities.filter(city => city !== start && (isCircular || city !== end));
+                const path = [start];
+                
+                for (const index of chromosome) {
+                    path.push(remainingCities[index]);
+                }
+                
+                if (!isCircular) {
+                    path.push(end);
+                } else {
+                    path.push(start); // Complete the circuit
+                }
+                
+                // Calculate total distance
+                let totalDistance = 0;
+                for (let i = 0; i < path.length - 1; i++) {
+                    totalDistance += getDistance(path[i], path[i + 1]);
+                }
+                
+                return totalDistance;
+            }
+            
+            function tournamentSelection(population, fitnessValues) {
+                // Select k random individuals and return the best one
+                const k = 3;
+                const indices = [];
+                
+                for (let i = 0; i < k; i++) {
+                    indices.push(Math.floor(Math.random() * population.length));
+                }
+                
+                let bestIndex = indices[0];
+                for (let i = 1; i < indices.length; i++) {
+                    if (fitnessValues[indices[i]] < fitnessValues[bestIndex]) {
+                        bestIndex = indices[i];
+                    }
+                }
+                
+                return population[bestIndex];
+            }
+            
+            function orderCrossover(parent1, parent2) {
+                const n = parent1.length;
+                
+                // Choose two random crossover points
+                const start = Math.floor(Math.random() * n);
+                const end = start + Math.floor(Math.random() * (n - start));
+                
+                // Initialize child with the segment from parent1
+                const child = Array(n).fill(null);
+                for (let i = start; i <= end; i++) {
+                    child[i] = parent1[i];
+                }
+                
+                // Fill in the remaining positions with values from parent2
+                let pointer = 0;
+                for (let i = 0; i < n; i++) {
+                    if (child[i] === null) {
+                        // Find next value in parent2 that's not already in child
+                        while (child.includes(parent2[pointer])) {
+                            pointer++;
+                            if (pointer >= n) pointer = 0;
+                        }
+                        child[i] = parent2[pointer];
+                        pointer++;
+                    }
+                }
+                
+                return child;
+            }
+            
+            function mutate(chromosome) {
+                // Swap mutation: swap two random positions
+                const i = Math.floor(Math.random() * chromosome.length);
+                let j = Math.floor(Math.random() * chromosome.length);
+                
+                // Make sure i and j are different
+                while (i === j) {
+                    j = Math.floor(Math.random() * chromosome.length);
+                }
+                
+                [chromosome[i], chromosome[j]] = [chromosome[j], chromosome[i]];
+                return chromosome;
+            }
+        }
+        
+        // Utility functions
+        function getDistance(city1, city2) {
+            // Check if there's a direct edge between the cities
+            for (const edge of edges) {
+                if (edge.from === city1 && edge.to === city2) {
+                    return edge.weight;
+                }
+                
+                // For undirected graphs, also check the reverse
+                if (!directedToggle.checked && edge.from === city2 && edge.to === city1) {
+                    return edge.weight;
+                }
+            }
+            
+            // If no direct edge, use Euclidean distance
+            const dx = city2.x - city1.x;
+            const dy = city2.y - city1.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        function highlightSolution(result) {
+            if (!result || !result.path) return;
+            
+            const path = result.path;
+            
+            // Clear previous highlighting
+            edges.forEach(edge => edge.highlighted = false);
+            
+            // Highlight edges in the solution path
+            for (let i = 0; i < path.length - 1; i++) {
+                const from = path[i];
+                const to = path[i + 1];
+                
+                // Find the edge in the graph
+                let found = false;
+                for (const edge of edges) {
+                    if (edge.from === from && edge.to === to) {
+                        edge.highlighted = true;
+                        found = true;
+                        break;
+                    }
+                    
+                    // For undirected graphs, also check the reverse
+                    if (!directedToggle.checked && edge.from === to && edge.to === from) {
+                        edge.highlighted = true;
+                        found = true;
+                        break;
+                    }
+                }
+                
+                // If edge doesn't exist, create a temporary highlighted edge
+                if (!found) {
+                    const tempEdge = new Edge(from, to, getDistance(from, to), directedToggle.checked);
+                    tempEdge.highlighted = true;
+                    edges.push(tempEdge);
+                }
+            }
+            
+            // Update the canvas
+            updateCanvas();
+            
+            // Animate the solution path
+            animateSolution(path);
+        }
+        
+        function animateSolution(path) {
+            if (animationInProgress) return;
+            
+            animationInProgress = true;
+            let step = 0;
+            
+            function animate() {
+                if (step >= path.length) {
+                    animationInProgress = false;
+                    return;
+                }
+                
+                // Reset highlighting
+                cities.forEach(city => city.highlighted = false);
+                
+                // Highlight current city
+                path[step].highlighted = true;
+                
+                updateCanvas();
+                
+                step++;
+                setTimeout(animate, 500);
+            }
+            
+            animate();
+        }
+        
+        function displayStats(result) {
+            if (!result) return;
+            
+            const { path, distance, algorithm, settings } = result;
+            
+            let statsText = `ALGORITHM: ${algorithm}\n`;
+            statsText += `TOTAL DISTANCE: ${distance.toFixed(2)}\n`;
+            statsText += `OPTIMAL PATH: ${path.map(city => city.id).join(' → ')}\n\n`;
+            
+            // Display algorithm-specific settings
+            statsText += 'ALGORITHM SETTINGS:\n';
+            for (const [key, value] of Object.entries(settings)) {
+                statsText += `  ${key}: ${value}\n`;
+            }
+            
+            statsDisplay.textContent = statsText;
+        }
+        
+        // Initialize the application
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

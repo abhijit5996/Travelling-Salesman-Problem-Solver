@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
+    <title>OptimalWay</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap');
+        
+        body {
+            background-color: #0a0a12;
+            color: #e0e0ff;
+            font-family: 'Rajdhani', sans-serif;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(110, 72, 170, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 20%);
+        }
+        .sidebar {
+            background-color: #121225;
+            border-right: 1px solid #3a3a5a;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .menu-item {
+            transition: all 0.3s ease;
+            position: relative;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        .menu-item:hover {
+            transform: translateX(10px);
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
+        }
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            transition: width 0.3s ease;
+        }
+        .menu-item:hover::after {
+            width: 100%;
+        }
+        .get-started-btn {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #0a0a12;
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .get-started-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.6);
+        }
+        .get-started-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            transform: rotate(30deg);
+            transition: all 0.5s ease;
+        }
+        .get-started-btn:hover::before {
+            left: 100%;
+        }
+        #team-members, #about-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            opacity: 0;
+        }
+        #team-members.reveal, #about-section.reveal {
+            max-height: 300px;
+            opacity: 1;
+        }
+        .team-member, .about-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        .team-member.visible, .about-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .team-member {
+            position: relative;
+            padding-left: 20px;
+            font-weight: 600;
+        }
+        .team-member::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: #ff00ff;
+            font-weight: bold;
+        }
+        .about-content {
+            border-left: 3px solid #00ffff;
+            padding-left: 15px;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        /* Reduced blur for main headings */
+        .main-title {
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+        .sidebar-title {
+            text-shadow: 0 0 3px rgba(0, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar w-64 p-6 fixed left-0 top-0 h-full">
+        <nav>
+            <h1 class="sidebar-title text-3xl font-bold mb-10 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">TSP PROJECT</h1>
+            <ul class="space-y-6">
+                <li><a href="#" id="about-btn" class="menu-item text-xl text-gray-300 hover:text-cyan-300">ABOUT</a></li>
+                <li><a href="#" id="members-btn" class="menu-item text-xl text-gray-300 hover:text-purple-300">MEMBERS</a></li>
+                <li><a href="#" class="menu-item text-xl text-gray-300 hover:text-pink-300">INITIALIZE SYSTEM</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 flex-grow p-10 flex flex-col justify-center items-start">
+        <h1 class="main-title text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">TRAVELLING SALESMAN PROBLEM</h1>
+        <p class="text-xl mb-10 text-gray-400 max-w-2xl">
+            <span class="text-cyan-300">EXPLORE</span> the fascinating world of optimization algorithms and graph theory with our <span class="text-purple-300">INNOVATIVE</span> TSP solution.
+        </p>
+        
+        <!-- About Section -->
+        <div id="about-section" class="mt-6 space-y-4">
+            <h2 class="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">ABOUT US</h2>
+        </div>
+
+        <!-- Team Members Section -->
+        <div id="team-members" class="mt-6 space-y-4">
+            <h2 class="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">OUR TEAM</h2>
+        </div>
+
+        <!-- Get Started Button -->
+        <a href="homepage.html" class="get-started-btn text-black font-bold py-3 px-6 rounded-lg mt-6 inline-block">
+            INITIALIZE SYSTEM
+        </a>
+    </div>
+
+    <script>
+        // About Section Reveal
+        const aboutBtn = document.getElementById('about-btn');
+        const aboutSectionContainer = document.getElementById('about-section');
+        const aboutContent = `
+Welcome to our **TSP SOLVER TOOL** – an innovative solution designed to tackle one of the most well-known optimization challenges: the **TRAVELLING SALESMAN PROBLEM (TSP)**. Our goal is to provide an intuitive and efficient platform that helps users find the shortest possible route covering multiple destinations while minimizing costs and travel time.
+
+Our tool is built using **HTML, CSS, and JavaScript**, ensuring a seamless and interactive experience without relying on external map APIs. We leverage advanced **METAHEURISTIC ALGORITHMS** to approximate the optimal path, making it a valuable resource for researchers, students, and professionals working on logistics, delivery systems, and route planning.
+
+Whether you're exploring TSP for academic purposes or looking for a practical routing solution, our solver is here to help. 
+
+**OPTIMIZING ROUTES, SIMPLIFYING TRAVEL!**
+        `;
+
+        aboutBtn.addEventListener('click', function() {
+            aboutSectionContainer.classList.toggle('reveal');
+            
+            // Clear existing content
+            aboutSectionContainer.innerHTML = '<h2 class="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">ABOUT US</h2>';
+            
+            // Create and add about content
+            const aboutEl = document.createElement('div');
+            aboutEl.classList.add('about-content', 'text-gray-300', 'pl-4', 'whitespace-pre-wrap');
+            aboutEl.innerHTML = aboutContent.replace(/\*\*(.*?)\*\*/g, '<strong class="text-cyan-300">$1</strong>');
+            
+            // Add animation
+            setTimeout(() => {
+                aboutEl.classList.add('visible');
+            }, 100);
+            
+            aboutSectionContainer.appendChild(aboutEl);
+        });
+
+        // Team Members Reveal
+        const membersBtn = document.getElementById('members-btn');
+        const teamMembersContainer = document.getElementById('team-members');
+        const teamMembers = [
+            'ABHIJIT DAS', 
+            'TUHIN ROY', 
+            'PALLAB MITRA', 
+            'SUPRIYO DAS UKIL'
+        ];
+
+        membersBtn.addEventListener('click', function() {
+            teamMembersContainer.classList.toggle('reveal');
+            
+            // Clear existing members
+            teamMembersContainer.innerHTML = '<h2 class="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">OUR TEAM</h2>';
+            
+            // Add team members with staggered animation
+            teamMembers.forEach((member, index) => {
+                const memberEl = document.createElement('div');
+                memberEl.classList.add('team-member', 'text-gray-300', 'pl-4');
+                memberEl.textContent = member;
+                
+                // Stagger the animation
+                setTimeout(() => {
+                    memberEl.classList.add('visible');
+                }, index * 200);
+                
+                teamMembersContainer.appendChild(memberEl);
+            });
+        });
+    </script>
+</body>  
+</html>
