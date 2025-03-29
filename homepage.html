@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Replace your existing meta viewport tag with this -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <link rel="icon" type="image/jpg" href="favicon.jpg">
     <title>OptimalWay</title>
     <style>
@@ -470,6 +471,31 @@
                             0 0 30px rgba(13, 240, 252, 0.4);
             }
         }
+        /* Add this to your existing style section */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .control-group {
+                margin-bottom: 10px;
+                }
+            
+            .btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            #canvas {
+                height: 400px !important;
+            }
+            
+            .legend {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -795,7 +821,8 @@
         
         // Event listeners
         canvas.addEventListener('click', handleCanvasClick);
-        canvas.addEventListener('mousemove', handleCanvasMouseMove);
+        canvas.addEventListener('touchstart', handleTouch, {passive: false});
+        canvas.addEventListener('touchmove', handleTouchMove, {passive: false});    
         
         modeSelect.addEventListener('change', handleModeChange);
         algorithmSelect.addEventListener('change', handleAlgorithmChange);
@@ -811,16 +838,25 @@
         
         // Initialize
         function init() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            updateCanvas();
-        }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    updateCanvas();
+}
+
+function resizeCanvas() {
+    const container = document.querySelector('.canvas-container');
+    canvas.width = container.clientWidth;
+    canvas.height = Math.min(container.clientHeight, 600); // Limit height if needed
+    updateCanvas();
+}
         
         // Canvas event handlers
         function handleCanvasClick(event) {
             const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+            const coords = getCanvasCoordinates(event);
+            const x = coords.x;
+            const y = coords.y;
+            
             
             const mode = modeSelect.value;
             
@@ -837,8 +873,9 @@
         
         function handleCanvasMouseMove(event) {
             const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+            const coords = getCanvasCoordinates(event);
+            const x = coords.x;
+            const y = coords.y;
             
             const mode = modeSelect.value;
             
@@ -850,6 +887,46 @@
                 updateCanvas();
             }
         }
+        function handleTouch(event) {
+    event.preventDefault();
+    const coords = getCanvasCoordinates(event);
+    handleCanvasClick({
+        clientX: coords.x,
+        clientY: coords.y,
+        preventDefault: () => {}
+    });
+}
+
+function handleTouchMove(event) {
+    event.preventDefault();
+    const coords = getCanvasCoordinates(event);
+    handleCanvasMouseMove({
+        clientX: coords.x,
+        clientY: coords.y,
+        preventDefault: () => {}
+    });
+}
+function getCanvasCoordinates(event) {
+    const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
+    
+    if (event.touches) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+    } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+    }
+    
+    // Account for canvas scaling
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+    };
+}
         
         // Mode handling
         function handleModeChange() {
@@ -1307,6 +1384,27 @@
             if (cities.length < 3) {
                 showToast('NEED AT LEAST 3 NODES TO SOLVE TSP');
                 return;
+                // In your solveTSP function, add this at the beginning:
+            const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+            
+            // Then modify your algorithm calls like this:
+            switch (algorithm) {
+                case 'brute':
+                    if (isMobile && cities.length > 5) {
+                        showToast('Brute Force limited to 5 nodes on mobile');
+                        return;
+                    }
+                    result = bruteForceTSP();
+                    break;
+                case 'genetic':
+                    if (isMobile) {
+                        document.getElementById('populationSize').value = 30;
+                        document.getElementById('generations').value = 50;
+                    }
+                    result = geneticAlgorithmTSP();
+                    break;
+                // ... other cases
+            }
             }
             
             const algorithm = algorithmSelect.value;
