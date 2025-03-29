@@ -1,7 +1,7 @@
 
 # OptimalWay - Traveling Salesman Problem Solver
 
-![OptiRouteX Screenshot](![Ai project](https://github.com/user-attachments/assets/5e494abe-16d2-4f27-ba25-3ffddca049aa)
+![OptimalWay Screenshot](![Ai project](https://github.com/user-attachments/assets/5e494abe-16d2-4f27-ba25-3ffddca049aa)
 )
 
 OptiRouteX is an interactive web application that visualizes various algorithms for solving the Traveling Salesman Problem (TSP). With a cyberpunk-inspired UI, it allows users to create graphs, connect nodes with weighted edges, and find optimal routes using different computational approaches.
