@@ -497,6 +497,8 @@
                     <option value="nearest">NEAREST NEIGHBOR</option>
                     <option value="greedy">GREEDY APPROACH</option>
                     <option value="genetic">GENETIC ALGORITHM</option>
+                    <option value="annealing">SIMULATED ANNEALING</option>
+                    <option value="ant">ANT COLONY</option>
                 </select>
             </div>
             
@@ -543,6 +545,34 @@
             <div id="greedySettings" style="display: none;">
                 <label for="greedyIterations">ITERATIONS:</label>
                 <input type="number" id="greedyIterations" value="100" min="10" max="1000">
+            </div>
+            
+            <div id="annealingSettings" style="display: none;">
+                <label for="initialTemp">INITIAL TEMPERATURE:</label>
+                <input type="number" id="initialTemp" value="1000" min="100" max="10000">
+                
+                <label for="coolingRate">COOLING RATE (%):</label>
+                <input type="number" id="coolingRate" value="95" min="80" max="99">
+                
+                <label for="annealingIterations">ITERATIONS:</label>
+                <input type="number" id="annealingIterations" value="1000" min="100" max="10000">
+            </div>
+            
+            <div id="antSettings" style="display: none;">
+                <label for="antCount">NUMBER OF ANTS:</label>
+                <input type="number" id="antCount" value="10" min="5" max="50">
+                
+                <label for="antIterations">ITERATIONS:</label>
+                <input type="number" id="antIterations" value="100" min="10" max="500">
+                
+                <label for="evaporationRate">EVAPORATION RATE (%):</label>
+                <input type="number" id="evaporationRate" value="10" min="1" max="50">
+                
+                <label for="alpha">PHEROMONE IMPORTANCE (α):</label>
+                <input type="number" id="alpha" value="1" min="0.1" max="5" step="0.1">
+                
+                <label for="beta">DISTANCE IMPORTANCE (β):</label>
+                <input type="number" id="beta" value="2" min="0.1" max="5" step="0.1">
             </div>
         </div>
         
@@ -637,6 +667,8 @@
         const geneticSettings = document.getElementById('geneticSettings');
         const branchSettings = document.getElementById('branchSettings');
         const greedySettings = document.getElementById('greedySettings');
+        const annealingSettings = document.getElementById('annealingSettings');
+        const antSettings = document.getElementById('antSettings');
         
         // City class
         class City {
@@ -877,6 +909,8 @@
             geneticSettings.style.display = 'none';
             branchSettings.style.display = 'none';
             greedySettings.style.display = 'none';
+            annealingSettings.style.display = 'none';
+            antSettings.style.display = 'none';
             
             // Show the relevant settings panel
             if (algorithm === 'genetic') {
@@ -885,6 +919,10 @@
                 branchSettings.style.display = 'block';
             } else if (algorithm === 'greedy') {
                 greedySettings.style.display = 'block';
+            } else if (algorithm === 'annealing') {
+                annealingSettings.style.display = 'block';
+            } else if (algorithm === 'ant') {
+                antSettings.style.display = 'block';
             }
         }
         
@@ -1339,6 +1377,12 @@
                             break;
                         case 'genetic':
                             result = geneticAlgorithmTSP();
+                            break;
+                        case 'annealing':
+                            result = simulatedAnnealingTSP();
+                            break;
+                        case 'ant':
+                            result = antColonyTSP();
                             break;
                     }
                     
@@ -1803,8 +1847,8 @@
             // Helper functions for genetic algorithm
             function getRandomPermutation() {
                 // Create a permutation of indices for cities excluding start and possibly end
-                const n = cities.length - 1 - (isCircular ? 0 : 1);
-                const indices = Array.from({ length: n }, (_, i) => i);
+                const remainingCities = cities.filter(city => city !== start && (isCircular || city !== end));
+                const indices = Array.from({ length: remainingCities.length }, (_, i) => i);
                 
                 // Shuffle the array
                 for (let i = indices.length - 1; i > 0; i--) {
@@ -1903,6 +1947,267 @@
             }
         }
         
+        function simulatedAnnealingTSP() {
+            const initialTemp = parseInt(document.getElementById('initialTemp').value);
+            const coolingRate = parseInt(document.getElementById('coolingRate').value) / 100;
+            const iterations = parseInt(document.getElementById('annealingIterations').value);
+            
+            const start = startCity || cities[0];
+            const isCircular = !endCity || endCity === start;
+            const end = endCity || start;
+            
+            // Generate initial solution (random permutation)
+            const remainingCities = cities.filter(city => city !== start && (isCircular || city !== end));
+            let currentSolution = getRandomPermutation(remainingCities);
+            let currentDistance = calculatePathDistance([start, ...currentSolution, isCircular ? start : end]);
+            
+            let bestSolution = [...currentSolution];
+            let bestDistance = currentDistance;
+            
+            let temperature = initialTemp;
+            
+            for (let i = 0; i < iterations; i++) {
+                // Generate neighbor solution
+                const neighborSolution = getNeighborSolution([...currentSolution]);
+                const neighborDistance = calculatePathDistance([start, ...neighborSolution, isCircular ? start : end]);
+                
+                // Calculate acceptance probability
+                const delta = neighborDistance - currentDistance;
+                const acceptanceProbability = Math.exp(-delta / temperature);
+                
+                // Accept the neighbor solution if it's better or with some probability
+                if (delta < 0 || Math.random() < acceptanceProbability) {
+                    currentSolution = [...neighborSolution];
+                    currentDistance = neighborDistance;
+                    
+                    // Update best solution if needed
+                    if (currentDistance < bestDistance) {
+                        bestSolution = [...currentSolution];
+                        bestDistance = currentDistance;
+                    }
+                }
+                
+                // Cool down the temperature
+                temperature *= coolingRate;
+            }
+            
+            // Build the final path
+            const path = [start, ...bestSolution];
+            if (!isCircular) {
+                path.push(end);
+            } else {
+                path.push(start);
+            }
+            
+            return {
+                path: path,
+                distance: bestDistance,
+                algorithm: 'Simulated Annealing',
+                settings: {
+                    initialTemperature: initialTemp,
+                    coolingRate: coolingRate * 100 + '%',
+                    iterations
+                }
+            };
+            
+            function getRandomPermutation(cities) {
+                const permutation = [...cities];
+                for (let i = permutation.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [permutation[i], permutation[j]] = [permutation[j], permutation[i]];
+                }
+                return permutation;
+            }
+            
+            function getNeighborSolution(solution) {
+                // Create a neighbor by swapping two random cities
+                const neighbor = [...solution];
+                const i = Math.floor(Math.random() * neighbor.length);
+                let j = Math.floor(Math.random() * neighbor.length);
+                
+                while (i === j) {
+                    j = Math.floor(Math.random() * neighbor.length);
+                }
+                
+                [neighbor[i], neighbor[j]] = [neighbor[j], neighbor[i]];
+                return neighbor;
+            }
+        }
+        
+        function antColonyTSP() {
+            const antCount = parseInt(document.getElementById('antCount').value);
+            const iterations = parseInt(document.getElementById('antIterations').value);
+            const evaporationRate = parseInt(document.getElementById('evaporationRate').value) / 100;
+            const alpha = parseFloat(document.getElementById('alpha').value);
+            const beta = parseFloat(document.getElementById('beta').value);
+            
+            const start = startCity || cities[0];
+            const isCircular = !endCity || endCity === start;
+            const end = endCity || start;
+            
+            // Initialize pheromone matrix
+            const pheromones = initializePheromones();
+            
+            let bestPath = [];
+            let bestDistance = Infinity;
+            
+            for (let iter = 0; iter < iterations; iter++) {
+                const antPaths = [];
+                const antDistances = [];
+                
+                // Let each ant construct a solution
+                for (let ant = 0; ant < antCount; ant++) {
+                    const { path, distance } = constructAntSolution(pheromones, alpha, beta);
+                    antPaths.push(path);
+                    antDistances.push(distance);
+                    
+                    // Update best solution if needed
+                    if (distance < bestDistance) {
+                        bestPath = path;
+                        bestDistance = distance;
+                    }
+                }
+                
+                // Update pheromones
+                updatePheromones(pheromones, antPaths, antDistances, evaporationRate);
+            }
+            
+            return {
+                path: bestPath,
+                distance: bestDistance,
+                algorithm: 'Ant Colony Optimization',
+                settings: {
+                    antCount,
+                    iterations,
+                    evaporationRate: evaporationRate * 100 + '%',
+                    alpha,
+                    beta
+                }
+            };
+            
+            function initializePheromones() {
+                // Initialize pheromone matrix with small values
+                const pheromones = {};
+                const allCities = [...cities];
+                
+                for (const city1 of allCities) {
+                    pheromones[city1.id] = {};
+                    for (const city2 of allCities) {
+                        if (city1 !== city2) {
+                            pheromones[city1.id][city2.id] = 0.1;
+                        }
+                    }
+                }
+                
+                return pheromones;
+            }
+            
+            function constructAntSolution(pheromones, alpha, beta) {
+                const visited = new Set();
+                const path = [start];
+                let currentCity = start;
+                let totalDistance = 0;
+                
+                visited.add(start.id);
+                
+                while (visited.size < cities.length) {
+                    // Calculate probabilities for next city
+                    const probabilities = [];
+                    let total = 0;
+                    
+                    for (const city of cities) {
+                        if (!visited.has(city.id) && city !== currentCity) {
+                            const pheromone = pheromones[currentCity.id][city.id] || 0.1;
+                            const distance = getDistance(currentCity, city);
+                            const attractiveness = Math.pow(pheromone, alpha) * Math.pow(1 / distance, beta);
+                            
+                            probabilities.push({
+                                city,
+                                probability: attractiveness
+                            });
+                            total += attractiveness;
+                        }
+                    }
+                    
+                    // If no cities left to visit (shouldn't happen for TSP)
+                    if (probabilities.length === 0) {
+                        break;
+                    }
+                    
+                    // Normalize probabilities
+                    for (const item of probabilities) {
+                        item.probability /= total;
+                    }
+                    
+                    // Select next city based on probabilities
+                    let random = Math.random();
+                    let selectedCity = null;
+                    
+                    for (const item of probabilities) {
+                        random -= item.probability;
+                        if (random <= 0) {
+                            selectedCity = item.city;
+                            break;
+                        }
+                    }
+                    
+                    // If no city was selected (due to rounding errors), pick the first one
+                    if (!selectedCity) {
+                        selectedCity = probabilities[0].city;
+                    }
+                    
+                    // Move to the selected city
+                    const distance = getDistance(currentCity, selectedCity);
+                    path.push(selectedCity);
+                    visited.add(selectedCity.id);
+                    totalDistance += distance;
+                    currentCity = selectedCity;
+                }
+                
+                // Complete the circuit if needed
+                if (isCircular && path.length > 1) {
+                    totalDistance += getDistance(path[path.length - 1], start);
+                    path.push(start);
+                } else if (!isCircular && path[path.length - 1] !== end) {
+                    // Add the specified end city if not already the last city
+                    totalDistance += getDistance(path[path.length - 1], end);
+                    path.push(end);
+                }
+                
+                return { path, distance: totalDistance };
+            }
+            
+            function updatePheromones(pheromones, antPaths, antDistances, evaporationRate) {
+                // Evaporate pheromones
+                for (const city1 of cities) {
+                    for (const city2 of cities) {
+                        if (city1 !== city2) {
+                            pheromones[city1.id][city2.id] *= (1 - evaporationRate);
+                        }
+                    }
+                }
+                
+                // Deposit pheromones based on ant paths
+                for (let i = 0; i < antPaths.length; i++) {
+                    const path = antPaths[i];
+                    const distance = antDistances[i];
+                    const pheromoneToAdd = 1 / distance;
+                    
+                    for (let j = 0; j < path.length - 1; j++) {
+                        const from = path[j];
+                        const to = path[j + 1];
+                        
+                        pheromones[from.id][to.id] += pheromoneToAdd;
+                        
+                        // For undirected graphs, update the reverse as well
+                        if (!directedToggle.checked) {
+                            pheromones[to.id][from.id] += pheromoneToAdd;
+                        }
+                    }
+                }
+            }
+        }
+        
         // Utility functions
         function getDistance(city1, city2) {
             // Check if there's a direct edge between the cities
@@ -1921,6 +2226,14 @@
             const dx = city2.x - city1.x;
             const dy = city2.y - city1.y;
             return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        function calculatePathDistance(path) {
+            let distance = 0;
+            for (let i = 0; i < path.length - 1; i++) {
+                distance += getDistance(path[i], path[i + 1]);
+            }
+            return distance;
         }
         
         function highlightSolution(result) {
@@ -2017,4 +2330,4 @@
         window.addEventListener('load', init);
     </script>
 </body>
-</html>                       
+</html>
